@@ -15,8 +15,7 @@
             android:id="@+id/pb_loading"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:visibility="gone">
+            android:layout_centerInParent="true">
 
         </ProgressBar>
 
@@ -218,52 +217,54 @@
                     android:layout_marginBottom="@dimen/padding_x_large"
                     android:elevation="@dimen/padding_x_small"
                     app:cardCornerRadius="@dimen/padding_large"
-                    app:cardMaxElevation="@dimen/padding_x_small"
-                    app:cardElevation="@dimen/padding_x_small">
+                    app:cardElevation="@dimen/padding_x_small"
+                    app:cardMaxElevation="@dimen/padding_x_small">
 
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical">
+
                         <LinearLayout
+                            android:id="@+id/ll_main_bg_above"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:id="@+id/ll_main_bg_above"
                             android:layout_marginTop="0dp"
                             android:background="@drawable/snow_bg"
                             android:orientation="horizontal">
 
                             <RelativeLayout
+                                android:id="@+id/rl_pressure_wrapper"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:padding="@dimen/padding_x_small"
-                                android:id="@+id/rl_pressure_wrapper">
-                                
+                                android:padding="@dimen/padding_x_small">
+
                                 <LinearLayout
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:layout_centerInParent="true"
                                     android:orientation="vertical"
                                     android:padding="@dimen/padding_x_small">
-                                    
+
                                     <ImageView
                                         android:layout_width="25dp"
                                         android:layout_height="25dp"
                                         android:layout_gravity="center_horizontal"
                                         android:src="@drawable/pressure">
-                                        
+
                                     </ImageView>
+
                                     <TextView
+                                        android:id="@+id/tv_pressure"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
-                                        android:id="@+id/tv_pressure"
                                         android:fontFamily="@font/google_sans_medium"
-                                        android:textSize="@dimen/text_x_large"
                                         android:gravity="center"
+                                        android:text="@string/default_numbers"
                                         android:textColor="@color/white"
-                                        android:text="@string/default_numbers">
+                                        android:textSize="@dimen/text_large">
 
                                     </TextView>
 
@@ -271,23 +272,23 @@
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
                                         android:fontFamily="@font/google_sans_regular"
-                                        android:textSize="@dimen/text_med"
                                         android:gravity="center"
+                                        android:text="@string/pressure"
                                         android:textColor="@color/white"
-                                        android:text="@string/pressure">
+                                        android:textSize="@dimen/text_med">
 
                                     </TextView>
 
 
-                                    
                                 </LinearLayout>
                             </RelativeLayout>
+
                             <RelativeLayout
+                                android:id="@+id/rl_humidity_wrapper"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:padding="@dimen/padding_x_small"
-                                android:id="@+id/rl_humidity_wrapper">
+                                android:padding="@dimen/padding_x_small">
 
                                 <LinearLayout
                                     android:layout_width="match_parent"
@@ -303,15 +304,16 @@
                                         android:src="@drawable/ic_humidity">
 
                                     </ImageView>
+
                                     <TextView
+                                        android:id="@+id/tv_humidity"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
-                                        android:id="@+id/tv_humidity"
                                         android:fontFamily="@font/google_sans_medium"
-                                        android:textSize="@dimen/text_x_large"
                                         android:gravity="center"
+                                        android:text="@string/default_numbers"
                                         android:textColor="@color/white"
-                                        android:text="@string/default_numbers">
+                                        android:textSize="@dimen/text_large">
 
                                     </TextView>
 
@@ -319,23 +321,23 @@
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
                                         android:fontFamily="@font/google_sans_regular"
-                                        android:textSize="@dimen/text_med"
                                         android:gravity="center"
+                                        android:text="@string/humidity"
                                         android:textColor="@color/white"
-                                        android:text="@string/pressure">
+                                        android:textSize="@dimen/text_med">
 
                                     </TextView>
 
 
-
                                 </LinearLayout>
                             </RelativeLayout>
+
                             <RelativeLayout
+                                android:id="@+id/rl_wind_speed_wrapper"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:padding="@dimen/padding_x_small"
-                                android:id="@+id/rl_wind_speed_wrapper">
+                                android:padding="@dimen/padding_x_small">
 
                                 <LinearLayout
                                     android:layout_width="match_parent"
@@ -351,15 +353,16 @@
                                         android:src="@drawable/ic_wind">
 
                                     </ImageView>
+
                                     <TextView
+                                        android:id="@+id/tv_wind_speed"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
-                                        android:id="@+id/tv_wind_speed"
                                         android:fontFamily="@font/google_sans_medium"
-                                        android:textSize="@dimen/text_x_large"
                                         android:gravity="center"
+                                        android:text="@string/default_numbers"
                                         android:textColor="@color/white"
-                                        android:text="@string/default_numbers">
+                                        android:textSize="@dimen/text_large">
 
                                     </TextView>
 
@@ -367,33 +370,33 @@
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
                                         android:fontFamily="@font/google_sans_regular"
-                                        android:textSize="@dimen/text_med"
                                         android:gravity="center"
+                                        android:text="@string/wind_speed"
                                         android:textColor="@color/white"
-                                        android:text="@string/pressure">
+                                        android:textSize="@dimen/text_med">
 
                                     </TextView>
-
 
 
                                 </LinearLayout>
                             </RelativeLayout>
 
                         </LinearLayout>
+
                         <LinearLayout
+                            android:id="@+id/ll_main_bg_below"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:id="@+id/ll_main_bg_below"
                             android:layout_marginTop="0dp"
                             android:background="@drawable/snow_bg"
                             android:orientation="horizontal">
 
                             <RelativeLayout
+                                android:id="@+id/rl_sunrise_wrapper"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:padding="@dimen/padding_x_small"
-                                android:id="@+id/rl_sunrise_wrapper">
+                                android:padding="@dimen/padding_x_small">
 
                                 <LinearLayout
                                     android:layout_width="match_parent"
@@ -409,15 +412,16 @@
                                         android:src="@drawable/ic_sunrise">
 
                                     </ImageView>
+
                                     <TextView
+                                        android:id="@+id/tv_sunrise"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
-                                        android:id="@+id/tv_sunrise"
                                         android:fontFamily="@font/google_sans_medium"
-                                        android:textSize="@dimen/text_x_large"
                                         android:gravity="center"
+                                        android:text="@string/default_numbers"
                                         android:textColor="@color/white"
-                                        android:text="@string/default_numbers">
+                                        android:textSize="@dimen/text_large">
 
                                     </TextView>
 
@@ -425,23 +429,23 @@
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
                                         android:fontFamily="@font/google_sans_regular"
-                                        android:textSize="@dimen/text_med"
                                         android:gravity="center"
+                                        android:text="@string/sunrise"
                                         android:textColor="@color/white"
-                                        android:text="@string/pressure">
+                                        android:textSize="@dimen/text_med">
 
                                     </TextView>
 
 
-
                                 </LinearLayout>
                             </RelativeLayout>
+
                             <RelativeLayout
+                                android:id="@+id/rl_sunset_wrapper"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:padding="@dimen/padding_x_small"
-                                android:id="@+id/rl_sunset_wrapper">
+                                android:padding="@dimen/padding_x_small">
 
                                 <LinearLayout
                                     android:layout_width="match_parent"
@@ -457,15 +461,16 @@
                                         android:src="@drawable/ic_sunset">
 
                                     </ImageView>
+
                                     <TextView
+                                        android:id="@+id/tv_sunset"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
-                                        android:id="@+id/tv_sunset"
                                         android:fontFamily="@font/google_sans_medium"
-                                        android:textSize="@dimen/text_x_large"
                                         android:gravity="center"
+                                        android:text="@string/default_numbers"
                                         android:textColor="@color/white"
-                                        android:text="@string/default_numbers">
+                                        android:textSize="@dimen/text_large">
 
                                     </TextView>
 
@@ -473,23 +478,23 @@
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
                                         android:fontFamily="@font/google_sans_regular"
-                                        android:textSize="@dimen/text_med"
                                         android:gravity="center"
+                                        android:text="@string/sunset"
                                         android:textColor="@color/white"
-                                        android:text="@string/pressure">
+                                        android:textSize="@dimen/text_med">
 
                                     </TextView>
 
 
-
                                 </LinearLayout>
                             </RelativeLayout>
+
                             <RelativeLayout
+                                android:id="@+id/rl_temp_fahrenheit_wrapper"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:padding="@dimen/padding_x_small"
-                                android:id="@+id/rl_temp_fahrenheit_wrapper">
+                                android:padding="@dimen/padding_x_small">
 
                                 <LinearLayout
                                     android:layout_width="match_parent"
@@ -505,15 +510,16 @@
                                         android:src="@drawable/ic_fahrenheit">
 
                                     </ImageView>
+
                                     <TextView
+                                        android:id="@+id/tv_temp_fahrenheit"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
-                                        android:id="@+id/tv_temp_fahrenheit"
                                         android:fontFamily="@font/google_sans_medium"
-                                        android:textSize="@dimen/text_x_large"
                                         android:gravity="center"
+                                        android:text="@string/default_numbers"
                                         android:textColor="@color/white"
-                                        android:text="@string/default_numbers">
+                                        android:textSize="@dimen/text_large">
 
                                     </TextView>
 
@@ -521,13 +527,12 @@
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
                                         android:fontFamily="@font/google_sans_regular"
-                                        android:textSize="@dimen/text_med"
                                         android:gravity="center"
+                                        android:text="@string/fahrenheit"
                                         android:textColor="@color/white"
-                                        android:text="@string/pressure">
+                                        android:textSize="@dimen/text_med">
 
                                     </TextView>
-
 
 
                                 </LinearLayout>
@@ -538,12 +543,7 @@
                     </LinearLayout>
 
 
-
-
-
                 </com.google.android.material.card.MaterialCardView>
-
-
 
 
             </RelativeLayout>

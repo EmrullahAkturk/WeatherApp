@@ -95,7 +95,8 @@ class MainPageFragment : Fragment() {
                 val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
                 startActivity(intent)
             }
-
+            binding.rlMainLayout.visibility = View.VISIBLE
+            binding.pbLoading.visibility = View.GONE
         } else {
             requestPermission()
         }
@@ -131,7 +132,7 @@ class MainPageFragment : Fragment() {
         //binding.tvDayMaxTemp = "Day ${kelvinToCelcius(body!!.main.temp_max)} ° "
         //binding.tvDayMinTemp
         binding.tvTemp.text = " ${kelvinToCelcius(body!!.main.temp)} ° "
-        binding.tvFeelsLike.text = " ${kelvinToCelcius(body!!.main.feels_like)} ° "
+        binding.tvFeelsLike.text = "Feels ALike ${kelvinToCelcius(body!!.main.feels_like)} ° "
         binding.tvWeatherType.text = body.weather[0].main
         binding.tvSunrise.text = timeStampToLocalDate(body.sys.sunrise)
         binding.tvSunset.text = timeStampToLocalDate(body.sys.sunset)
@@ -158,7 +159,7 @@ class MainPageFragment : Fragment() {
     }
 
     private fun kelvinToCelcius(temp: Double): Double {
-        var intTemp = temp
+        var intTemp = temp - 272.15
         return intTemp.toBigDecimal().setScale(1, RoundingMode.UP).toDouble()
     }
 

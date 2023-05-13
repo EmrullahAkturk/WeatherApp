@@ -58,4 +58,8 @@ dependencies {
     //Location Dependency
     implementation 'com.google.android.gms:play-services-location:21.0.1'
 
+    //ViewModel
+    implementation "androidx.lifecycle:lifecycle-viewmodel:2.6.1"
+    implementation "androidx.activity:activity-ktx:1.7.1"
+
 }
