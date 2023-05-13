@@ -1,30 +1,20 @@
-package com.yargisoft.weatherapp.ui.fragments
+/*
+package com.yargisoft.weatherapp.data.repository
 
 import android.content.Context
-import android.content.Context.INPUT_METHOD_SERVICE
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationManager
-import android.os.Bundle
 import android.provider.Settings
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import android.view.WindowManager
-import android.view.inputmethod.EditorInfo
-import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
-import androidx.databinding.DataBindingUtil
+import androidx.core.content.ContentProviderCompat.requireContext
 import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
 import com.yargisoft.weatherapp.POJO.ModelClass
-import com.yargisoft.weatherapp.R
 import com.yargisoft.weatherapp.Utilities.ApiUtilities
-import com.yargisoft.weatherapp.databinding.FragmentMainPageBinding
+import com.yargisoft.weatherapp.ui.fragments.MainPageFragment
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -35,48 +25,8 @@ import java.time.ZoneId
 import java.util.*
 import kotlin.math.roundToInt
 
-class MainPageFragment : Fragment() {
-
-    private lateinit var binding: FragmentMainPageBinding
+class MainPageRepository {
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
-    companion object {
-        private const val PERMISSION_REQUEST_ACCESS_LOCATİON = 100
-        val API_KEY = "78f93b7b53480ec14ff0b52923381468"
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_main_page, container, false)
-        binding.rlMainLayout.visibility = View.GONE
-
-        fusedLocationProviderClient =
-            LocationServices.getFusedLocationProviderClient(requireActivity())
-
-        getCurrentLocation()
-        binding.etGetCityName.setOnEditorActionListener { v, actionId, event ->
-            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                getCityWeather(binding.etGetCityName.text.toString())
-                val view = requireActivity().currentFocus
-                if (view != null) {
-                    val imm: InputMethodManager =
-                        requireActivity().getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-                    imm.hideSoftInputFromWindow(view.windowToken, 0)
-                    binding.etGetCityName.clearFocus()
-                }
-                true
-            } else {
-                false
-            }
-        }
-
-
-        return binding.root
-    }
-
     private fun getCurrentLocation() {
 
         if (checkPermission()) {
@@ -118,22 +68,51 @@ class MainPageFragment : Fragment() {
                 val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
                 startActivity(intent)
             }
-            binding.rlMainLayout.visibility = View.VISIBLE
-            binding.pbLoading.visibility = View.GONE
+
         } else {
             requestPermission()
         }
 
     }
+    private fun isLocationEnabled(): Boolean {
+        val locationManager: LocationManager =
+            requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(
+            LocationManager.NETWORK_PROVIDER
+        )
+    }
+    private fun requestPermission() {
+        ActivityCompat.requestPermissions(
+            requireActivity(), arrayOf(
+                android.Manifest.permission.ACCESS_COARSE_LOCATION,
+                android.Manifest.permission.ACCESS_FINE_LOCATION
+            ), MainPageFragment.PERMISSION_REQUEST_ACCESS_LOCATİON
+        )
+    }
+    private fun checkPermission(): Boolean {
+        if (ActivityCompat.checkSelfPermission(
+                requireContext(),
+                android.Manifest.permission.ACCESS_COARSE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                requireContext(),
+                android.Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            return true
+        }
+        return false
+    }
     private fun fetchCurrentLocationWeather(latitude: String, longitude: String) {
-
         binding.pbLoading.visibility = View.VISIBLE
-        ApiUtilities.getApiInterface()?.getCurrentWeahterData(latitude, longitude, API_KEY)
+        ApiUtilities.getApiInterface()?.getCurrentWeahterData(latitude, longitude,
+            MainPageFragment.API_KEY
+        )
             ?.enqueue(object : Callback<ModelClass> {
                 override fun onResponse(call: Call<ModelClass>, response: Response<ModelClass>) {
                     if (response.isSuccessful) {
+
                         setDataOnViews(response.body())
-                        updateUI(response.body()!!.id)
+                        println("Data alındı ${response.body()}")
                     }
                 }
 
@@ -148,25 +127,65 @@ class MainPageFragment : Fragment() {
     private fun setDataOnViews(body: ModelClass?) {
         val sdf = SimpleDateFormat("dd/MM/yyyy hh:mm")
         val currentDate = sdf.format(Date())
+        if (body != null) {
+            updateUI(body.weather[0].id)
+        }
         binding.tvDateAndTime.text = currentDate
-        //binding.tvDayMaxTemp = "Day ${kelvinToCelcius(body!!.main.temp_max)} ° "
-        //binding.tvDayMinTemp
+        binding.tvMaxTemp.text = "Day ${kelvinToCelcius(body!!.main.temp_min)} °  "
+        binding.tvMinTemp.text = "Night ${kelvinToCelcius(body!!.main.temp_max)} °  "
         binding.tvTemp.text = " ${kelvinToCelcius(body!!.main.temp)} ° "
-        binding.tvFeelsLike.text = "Feels ALike ${kelvinToCelcius(body!!.main.feels_like)} ° "
-        binding.tvWeatherType.text = body.weather[0].description
+        binding.tvFeelsLike.text = " Feels Alike ${kelvinToCelcius(body!!.main.feels_like)} ° "
+        binding.tvWeatherType.text = body.weather[0].main
         binding.tvSunrise.text = timeStampToLocalDate(body.sys.sunrise)
         binding.tvSunset.text = timeStampToLocalDate(body.sys.sunset)
         binding.tvPressure.text = body.main.pressure.toString()
-        binding.tvHumidity.text = "${body.main.humidity} %"
+        binding.tvHumidity.text = "%${body.main.humidity}"
         binding.tvWindSpeed.text = "${body.wind.speed} m/s"
         binding.tvTempFahrenheit.text =
             "${(kelvinToCelcius(body.main.temp)).times(1.8).plus(32).roundToInt()}"
         binding.etGetCityName.setText(body.name)
-        updateUI(body.weather[0].id)
+
+
     }
-    fun updateUI(id: Int) {
-        if (id >= 200 && id <= 232) {
-            Toast.makeText(requireContext(), "${id}", Toast.LENGTH_SHORT).show()
+
+    private fun timeStampToLocalDate(timeStamp: Long): String {
+        val localTime = timeStamp.let {
+            Instant.ofEpochSecond(it)
+                .atZone(ZoneId.systemDefault())
+                .toLocalTime()
+        }
+        return localTime.toString()
+    }
+
+    private fun kelvinToCelcius(temp: Double): Double {
+        val intTemp = temp - 272.15
+        return intTemp.toBigDecimal().setScale(1, RoundingMode.UP).toDouble()
+    }
+
+    private fun getCityWeather(cityName: String) {
+        binding.pbLoading.visibility = View.VISIBLE
+        ApiUtilities.getApiInterface()?.getCityWeahterData(cityName, API_KEY)
+            ?.enqueue(object : Callback<ModelClass> {
+                override fun onResponse(call: Call<ModelClass>, response: Response<ModelClass>) {
+                    setDataOnViews(response.body())
+                    if (response.body() != null) {
+                        updateUI(response.body()!!.id)
+                    }
+                }
+
+                override fun onFailure(call: Call<ModelClass>, t: Throwable) {
+                    Toast.makeText(requireContext(), "Not a valid city", Toast.LENGTH_SHORT).show()
+                }
+
+            })
+    }
+
+
+
+
+
+    private fun updateUI(id: Int) {
+        if (id in 200..232) {
             requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
             requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
             requireActivity().window.statusBarColor =
@@ -185,8 +204,10 @@ class MainPageFragment : Fragment() {
                 ContextCompat.getDrawable(requireActivity(), R.drawable.thunderstorm_bg)
             binding.ivWeatherBg.setImageResource(R.drawable.thunderstorm_bg)
             binding.ivWeatherIcon.setImageResource(R.drawable.ic_thunderstorm)
-        } else if (id >= 300 && id <= 321) {
-            Toast.makeText(requireContext(), "${id}", Toast.LENGTH_SHORT).show()
+            */
+/*binding.tvWeatherType.text = body.weather[0].main*//*
+
+        } else if (id in 300..321) {
             requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
             requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
             requireActivity().window.statusBarColor =
@@ -205,8 +226,7 @@ class MainPageFragment : Fragment() {
                 ContextCompat.getDrawable(requireActivity(), R.drawable.drizzle_bg)
             binding.ivWeatherBg.setImageResource(R.drawable.drizzle_bg)
             binding.ivWeatherIcon.setImageResource(R.drawable.mist_bg)
-        } else if (id >= 500 && id <= 531) {
-            Toast.makeText(requireContext(), "${id}", Toast.LENGTH_SHORT).show()
+        } else if (id in 500..531) {
             requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
             requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
             requireActivity().window.statusBarColor =
@@ -226,9 +246,7 @@ class MainPageFragment : Fragment() {
                 ContextCompat.getDrawable(requireActivity(), R.drawable.rainy_bg)
             binding.ivWeatherBg.setImageResource(R.drawable.rainy_bg)
             binding.ivWeatherIcon.setImageResource(R.drawable.ic_rainy)
-        } else if (id >= 600 && id <= 620) {
-            Toast.makeText(requireContext(), "${id}", Toast.LENGTH_SHORT).show()
-
+        } else if (id in 600..620) {
             requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
             requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
             requireActivity().window.statusBarColor =
@@ -247,8 +265,7 @@ class MainPageFragment : Fragment() {
                 ContextCompat.getDrawable(requireActivity(), R.drawable.snow_bg)
             binding.ivWeatherBg.setImageResource(R.drawable.snow_bg)
             binding.ivWeatherIcon.setImageResource(R.drawable.ic_snow)
-        } else if (id >= 700 && id <= 781) {
-            Toast.makeText(requireContext(), "${id}", Toast.LENGTH_SHORT).show()
+        } else if (id in 700..781) {
             requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
             requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
             requireActivity().window.statusBarColor =
@@ -259,6 +276,7 @@ class MainPageFragment : Fragment() {
                     R.color.atmosphere
                 )
             )
+
             binding.rlSubLayout.background =
                 ContextCompat.getDrawable(requireActivity(), R.drawable.mist_bg)
             binding.llMainBgBelow.background =
@@ -268,8 +286,6 @@ class MainPageFragment : Fragment() {
             binding.ivWeatherBg.setImageResource(R.drawable.mist_bg)
             binding.ivWeatherIcon.setImageResource(R.drawable.ic_mist)
         } else if (id == 800) {
-            Toast.makeText(requireContext(), "${id}", Toast.LENGTH_SHORT).show()
-
             requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
             requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
             requireActivity().window.statusBarColor =
@@ -289,105 +305,9 @@ class MainPageFragment : Fragment() {
                 ContextCompat.getDrawable(requireActivity(), R.drawable.clear_bg)
             binding.ivWeatherBg.setImageResource(R.drawable.clear_bg)
             binding.ivWeatherIcon.setImageResource(R.drawable.ic_clear)
-        } else if (id >= 801 && id <= 804) {
-            Toast.makeText(requireContext(), "${id}", Toast.LENGTH_SHORT).show()
-
-            requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-            requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
-            requireActivity().window.statusBarColor =
-                ContextCompat.getColor(requireContext(), R.color.snow)
-            binding.rvToolbar.setBackgroundColor(
-                ContextCompat.getColor(
-                    requireContext(),
-                    R.color.snow
-                )
-            )
-            binding.rlSubLayout.background =
-                ContextCompat.getDrawable(requireActivity(), R.drawable.snow_bg)
-            binding.llMainBgBelow.background =
-                ContextCompat.getDrawable(requireActivity(), R.drawable.snow_bg)
-            binding.llMainBgAbove.background =
-                ContextCompat.getDrawable(requireActivity(), R.drawable.snow_bg)
-            binding.ivWeatherBg.setImageResource(R.drawable.snow_bg)
-            binding.ivWeatherIcon.setImageResource(R.drawable.ic_cloud)
         }
     }
-    private fun timeStampToLocalDate(timeStamp: Long): String {
-        val localTime = timeStamp.let {
-            Instant.ofEpochSecond(it)
-                .atZone(ZoneId.systemDefault())
-                .toLocalTime()
-        }
-        return localTime.toString()
-    }
-    private fun kelvinToCelcius(temp: Double): Double {
-        val intTemp = temp - 272.15
-        return intTemp.toBigDecimal().setScale(1, RoundingMode.UP).toDouble()
-    }
-    private fun isLocationEnabled(): Boolean {
-        val locationManager: LocationManager =
-            requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(
-            LocationManager.NETWORK_PROVIDER
-        )
-    }
-    private fun requestPermission() {
-        ActivityCompat.requestPermissions(
-            requireActivity(), arrayOf(
-                android.Manifest.permission.ACCESS_COARSE_LOCATION,
-                android.Manifest.permission.ACCESS_FINE_LOCATION
-            ), PERMISSION_REQUEST_ACCESS_LOCATİON
-        )
-    }
-    private fun getCityWeather(cityName: String) {
-        binding.pbLoading.visibility = View.VISIBLE
-        ApiUtilities.getApiInterface()?.getCityWeahterData(cityName, MainPageFragment.API_KEY)
-            ?.enqueue(object : Callback<ModelClass> {
-                override fun onResponse(call: Call<ModelClass>, response: Response<ModelClass>) {
-                    try{
-                        setDataOnViews(response.body())
-                        if (response.body() != null) {
-                            println("id: ${response.body()!!.weather[0].id}")
-                            updateUI(response.body()!!.weather[0].id)
-                            binding.pbLoading.visibility = View.GONE
-                        }
-                    }catch (ex:java.lang.Exception){
-                        Toast.makeText(requireContext(), "Not a valid city", Toast.LENGTH_SHORT).show()
-                    }
 
-                }
 
-                override fun onFailure(call: Call<ModelClass>, t: Throwable) {
-                }
 
-            })
-    }
-    private fun checkPermission(): Boolean {
-        if (ActivityCompat.checkSelfPermission(
-                requireContext(),
-                android.Manifest.permission.ACCESS_COARSE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                requireContext(),
-                android.Manifest.permission.ACCESS_FINE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED
-        ) {
-            return true
-        }
-        return false
-    }
-    /* override fun onRequestPermissionsResult(
-         requestCode: Int,
-         permissions: Array<out String>,
-         grantResults: IntArray
-     ) {
-         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-         if (requestCode == PERMISSION_REQUEST_ACCESS_LOCATİON) {
-             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                 Toast.makeText(requireContext(), "Granted", Toast.LENGTH_SHORT).show()
-             } else {
-                 Toast.makeText(requireContext(), "Denied", Toast.LENGTH_SHORT).show()
-             }
-         }
-     }*/
-
-}
+}*/
