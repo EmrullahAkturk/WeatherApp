@@ -166,7 +166,6 @@ class MainPageFragment : Fragment() {
     }
     fun updateUI(id: Int) {
         if (id >= 200 && id <= 232) {
-            Toast.makeText(requireContext(), "${id}", Toast.LENGTH_SHORT).show()
             requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
             requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
             requireActivity().window.statusBarColor =
@@ -186,7 +185,7 @@ class MainPageFragment : Fragment() {
             binding.ivWeatherBg.setImageResource(R.drawable.thunderstorm_bg)
             binding.ivWeatherIcon.setImageResource(R.drawable.ic_thunderstorm)
         } else if (id >= 300 && id <= 321) {
-            Toast.makeText(requireContext(), "${id}", Toast.LENGTH_SHORT).show()
+
             requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
             requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
             requireActivity().window.statusBarColor =
@@ -206,7 +205,6 @@ class MainPageFragment : Fragment() {
             binding.ivWeatherBg.setImageResource(R.drawable.drizzle_bg)
             binding.ivWeatherIcon.setImageResource(R.drawable.mist_bg)
         } else if (id >= 500 && id <= 531) {
-            Toast.makeText(requireContext(), "${id}", Toast.LENGTH_SHORT).show()
             requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
             requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
             requireActivity().window.statusBarColor =
@@ -227,8 +225,6 @@ class MainPageFragment : Fragment() {
             binding.ivWeatherBg.setImageResource(R.drawable.rainy_bg)
             binding.ivWeatherIcon.setImageResource(R.drawable.ic_rainy)
         } else if (id >= 600 && id <= 620) {
-            Toast.makeText(requireContext(), "${id}", Toast.LENGTH_SHORT).show()
-
             requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
             requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
             requireActivity().window.statusBarColor =
@@ -248,7 +244,6 @@ class MainPageFragment : Fragment() {
             binding.ivWeatherBg.setImageResource(R.drawable.snow_bg)
             binding.ivWeatherIcon.setImageResource(R.drawable.ic_snow)
         } else if (id >= 700 && id <= 781) {
-            Toast.makeText(requireContext(), "${id}", Toast.LENGTH_SHORT).show()
             requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
             requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
             requireActivity().window.statusBarColor =
@@ -268,8 +263,6 @@ class MainPageFragment : Fragment() {
             binding.ivWeatherBg.setImageResource(R.drawable.mist_bg)
             binding.ivWeatherIcon.setImageResource(R.drawable.ic_mist)
         } else if (id == 800) {
-            Toast.makeText(requireContext(), "${id}", Toast.LENGTH_SHORT).show()
-
             requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
             requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
             requireActivity().window.statusBarColor =
@@ -290,8 +283,6 @@ class MainPageFragment : Fragment() {
             binding.ivWeatherBg.setImageResource(R.drawable.clear_bg)
             binding.ivWeatherIcon.setImageResource(R.drawable.ic_clear)
         } else if (id >= 801 && id <= 804) {
-            Toast.makeText(requireContext(), "${id}", Toast.LENGTH_SHORT).show()
-
             requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
             requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
             requireActivity().window.statusBarColor =
