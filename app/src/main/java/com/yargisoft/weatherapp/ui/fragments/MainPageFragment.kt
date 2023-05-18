@@ -22,7 +22,6 @@ import com.yargisoft.weatherapp.data.entity.ModelClass
 import com.yargisoft.weatherapp.R
 import com.yargisoft.weatherapp.Utilities.ApiUtilities
 import com.yargisoft.weatherapp.databinding.FragmentMainPageBinding
-import com.yargisoft.weatherapp.ui.viewmodel.MainViewModel
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -36,8 +35,8 @@ import kotlin.math.roundToInt
 class MainPageFragment : Fragment() {
 
     private lateinit var binding: FragmentMainPageBinding
-
-    private var viewModel = MainViewModel()
+    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+   
 
     companion object {
         val PERMISSION_REQUEST_ACCESS_LOCATION: Int = 100
@@ -53,13 +52,10 @@ class MainPageFragment : Fragment() {
         // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_main_page, container, false)
        /* binding.rlMainLayout.visibility = View.GONE*/
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireActivity())
         binding.etGetCityName.setOnEditorActionListener { v, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                val cityWeather = viewModel.getCityWeather(binding.etGetCityName.text.toString())
-                setDataOnViews(cityWeather)
-                if(cityWeather != null){
-                    updateUI(cityWeather.weather[0].id)
-                }
+                getCityWeather(binding.etGetCityName.text.toString())
                 val view = requireActivity().currentFocus
                 if (view != null) {
                     val imm: InputMethodManager =
@@ -73,12 +69,7 @@ class MainPageFragment : Fragment() {
             }
         }
 
-        val currentWeather = viewModel.getCurrentLocation()
-        setDataOnViews(currentWeather)
-        if (currentWeather !=null){
-            updateUI(currentWeather.weather[0].id)
-        }
-
+      getCurrentLocation()
 
         return binding.root
     }
@@ -88,18 +79,18 @@ class MainPageFragment : Fragment() {
         val sdf = SimpleDateFormat("dd/MM/yyyy hh:mm")
         val currentDate = sdf.format(Date())
         binding.tvDateAndTime.text = currentDate
-        binding.tvMaxTemp.text = "Day ${viewModel.kelvinToCelcius(body!!.main.temp_max)} ° "
-        binding.tvMinTemp.text = "Night ${viewModel.kelvinToCelcius(body!!.main.temp_min)} ° "
-        binding.tvTemp.text = " ${viewModel.kelvinToCelcius(body!!.main.temp)} ° "
-        binding.tvFeelsLike.text = "Feels ALike ${viewModel.kelvinToCelcius(body!!.main.feels_like)} ° "
+        binding.tvMaxTemp.text = "Day ${kelvinToCelcius(body!!.main.temp_max)} ° "
+        binding.tvMinTemp.text = "Night ${kelvinToCelcius(body!!.main.temp_min)} ° "
+        binding.tvTemp.text = " ${kelvinToCelcius(body!!.main.temp)} ° "
+        binding.tvFeelsLike.text = "Feels ALike ${kelvinToCelcius(body!!.main.feels_like)} ° "
         binding.tvWeatherType.text = body.weather[0].description
-        binding.tvSunrise.text = viewModel.timeStampToLocalDate(body.sys.sunrise)
-        binding.tvSunset.text = viewModel.timeStampToLocalDate(body.sys.sunset)
+        binding.tvSunrise.text = timeStampToLocalDate(body.sys.sunrise)
+        binding.tvSunset.text = timeStampToLocalDate(body.sys.sunset)
         binding.tvPressure.text = body.main.pressure.toString()
         binding.tvHumidity.text = "${body.main.humidity} %"
         binding.tvWindSpeed.text = "${body.wind.speed} m/s"
         binding.tvTempFahrenheit.text =
-            "${(viewModel.kelvinToCelcius(body.main.temp)).times(1.8).plus(32).roundToInt()}"
+            "${(kelvinToCelcius(body.main.temp)).times(1.8).plus(32).roundToInt()}"
         binding.etGetCityName.setText(body.name)
         updateUI(body.weather[0].id)
     }
@@ -244,6 +235,106 @@ class MainPageFragment : Fragment() {
     }
 
 
+
+    fun getCurrentLocation() {
+
+        if (ActivityCompat.checkSelfPermission(
+              requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return
+        }
+        fusedLocationProviderClient.lastLocation.addOnCompleteListener(requireActivity()) { task ->
+            val location: Location? = task.result
+            if (location == null) {
+                Toast.makeText(context, "Null received", Toast.LENGTH_SHORT).show()
+                // requestPermission()
+            } else {
+                Toast.makeText(
+                    context,
+                    "Reached location succesfully ",
+                    Toast.LENGTH_SHORT
+                ).show()
+                fetchCurrentLocationWeather(
+                    location.latitude.toString(),
+                    location.longitude.toString()
+                )
+            }
+
+        }
+    }
+
+    fun fetchCurrentLocationWeather(latitude: String, longitude: String){
+
+        ApiUtilities.getApiInterface()?.getCurrentWeahterData(
+            latitude, longitude,
+            MainPageFragment.API_KEY
+        )
+            ?.enqueue(object : Callback<ModelClass> {
+                override fun onResponse(call: Call<ModelClass>, response: Response<ModelClass>) {
+                    if (response.isSuccessful) {
+                        setDataOnViews(response.body())
+                       if (response.body() != null){
+                           updateUI(response.body()!!.weather[0].id)
+                       }
+                    }
+                }
+
+                override fun onFailure(call: Call<ModelClass>, t: Throwable) {
+                }
+
+            })
+
+
+    }
+
+
+
+    fun timeStampToLocalDate(timeStamp: Long): String {
+        val localTime = timeStamp.let {
+            Instant.ofEpochSecond(it)
+                .atZone(ZoneId.systemDefault())
+                .toLocalTime()
+        }
+        return localTime.toString()
+    }
+
+    fun kelvinToCelcius(temp: Double): Double {
+        val intTemp = temp - 272.15
+        return intTemp.toBigDecimal().setScale(1, RoundingMode.UP).toDouble()
+    }
+
+    fun getCityWeather(cityName: String) {
+
+        ApiUtilities.getApiInterface()?.getCityWeahterData(cityName, MainPageFragment.API_KEY)
+            ?.enqueue(object : Callback<ModelClass> {
+                override fun onResponse(call: Call<ModelClass>, response: Response<ModelClass>) {
+                    try {
+                        setDataOnViews(response.body())
+                        updateUI(response.body()!!.weather[0].id)
+                    } catch (ex: java.lang.Exception) {
+                        Toast.makeText(context, "Not a valid city", Toast.LENGTH_SHORT)
+                            .show()
+                    }
+                }
+
+                override fun onFailure(call: Call<ModelClass>, t: Throwable) {
+                }
+
+            })
+
+    }
 
 
 
