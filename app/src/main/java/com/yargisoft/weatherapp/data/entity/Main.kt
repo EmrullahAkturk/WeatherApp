@@ -1,4 +1,4 @@
-package com.yargisoft.weatherapp.POJO
+package com.yargisoft.weatherapp.data.entity
 
 data class Main(
     var temp: Double,

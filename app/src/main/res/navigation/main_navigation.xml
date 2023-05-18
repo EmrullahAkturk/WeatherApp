@@ -9,7 +9,11 @@
         android:name="com.yargisoft.weatherapp.ui.fragments.MainPageFragment"
         android:label="MainPageFragment" />
     <fragment
-        android:id="@+id/getLocationFragment"
-        android:name="com.yargisoft.weatherapp.ui.fragments.GetLocationFragment"
-        android:label="GetLocationFragment" />
+        android:id="@+id/loginPageFragment"
+        android:name="com.yargisoft.weatherapp.ui.fragments.LoginPageFragment"
+        android:label="LoginPageFragment" >
+        <action
+            android:id="@+id/mainGecis"
+            app:destination="@id/mainPageFragment" />
+    </fragment>
 </navigation>

@@ -1,6 +1,6 @@
 package com.yargisoft.weatherapp.Utilities
 
-import com.yargisoft.weatherapp.POJO.ModelClass
+import com.yargisoft.weatherapp.data.entity.ModelClass
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Query

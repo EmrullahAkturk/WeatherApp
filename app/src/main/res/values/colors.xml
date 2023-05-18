@@ -10,12 +10,12 @@
 
 
 
-    <color name="thunderstorms">#1361FD</color>
+    <color name="thunderstorms">#545F6E</color>
     <color name="drizzle">#526FA8</color>
-    <color name="rain">#8E8EFF</color>
-    <color name="snow">#987CFF</color>
+    <color name="rain">#146C94</color>
+    <color name="snow">#28437B</color>
     <color name="atmosphere">#A8B4CC</color>
-    <color name="clear">#FF906F</color>
+    <color name="clear">#FF2E00</color>
     <color name="clouds">#454A4C</color>
 
 
