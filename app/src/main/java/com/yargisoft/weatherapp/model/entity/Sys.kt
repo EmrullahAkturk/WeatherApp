@@ -1,4 +1,4 @@
-package com.yargisoft.weatherapp.data.entity
+package com.yargisoft.weatherapp.model.entity
 
 data class Sys(
     var type: Int,

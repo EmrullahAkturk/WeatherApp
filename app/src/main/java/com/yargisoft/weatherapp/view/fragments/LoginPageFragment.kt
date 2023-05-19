@@ -1,4 +1,4 @@
-package com.yargisoft.weatherapp.ui.fragments
+package com.yargisoft.weatherapp.view.fragments
 
 import android.Manifest
 import android.content.Context
@@ -14,11 +14,8 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.Navigation
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
 import com.yargisoft.weatherapp.R
 import com.yargisoft.weatherapp.databinding.FragmentLoginPageBinding
 

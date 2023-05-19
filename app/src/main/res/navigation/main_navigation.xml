@@ -6,11 +6,11 @@
     app:startDestination="@id/loginPageFragment">
     <fragment
         android:id="@+id/mainPageFragment"
-        android:name="com.yargisoft.weatherapp.ui.fragments.MainPageFragment"
+        android:name="com.yargisoft.weatherapp.view.fragments.MainPageFragment"
         android:label="MainPageFragment" />
     <fragment
         android:id="@+id/loginPageFragment"
-        android:name="com.yargisoft.weatherapp.ui.fragments.LoginPageFragment"
+        android:name="com.yargisoft.weatherapp.view.fragments.LoginPageFragment"
         android:label="LoginPageFragment" >
         <action
             android:id="@+id/mainGecis"

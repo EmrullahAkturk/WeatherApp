@@ -1,4 +1,4 @@
-package com.yargisoft.weatherapp.data.entity
+package com.yargisoft.weatherapp.model.entity
 
 data class Main(
     var temp: Double,

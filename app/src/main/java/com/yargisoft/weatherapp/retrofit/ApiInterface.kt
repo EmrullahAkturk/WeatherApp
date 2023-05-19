@@ -1,6 +1,6 @@
-package com.yargisoft.weatherapp.Utilities
+package com.yargisoft.weatherapp.retrofit
 
-import com.yargisoft.weatherapp.data.entity.ModelClass
+import com.yargisoft.weatherapp.model.entity.ModelClass
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Query

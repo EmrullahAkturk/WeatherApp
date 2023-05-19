@@ -1,6 +1,4 @@
-package com.yargisoft.weatherapp.data.entity
-
-import com.google.gson.annotations.SerializedName
+package com.yargisoft.weatherapp.model.entity
 
 data class Weather(var id: Int, var main: String, val description: String, var icon: String) {
 

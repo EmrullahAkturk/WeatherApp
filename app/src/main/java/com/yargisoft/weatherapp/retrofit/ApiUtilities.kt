@@ -1,4 +1,4 @@
-package com.yargisoft.weatherapp.Utilities
+package com.yargisoft.weatherapp.retrofit
 
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory

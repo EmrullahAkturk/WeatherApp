@@ -1,4 +1,4 @@
-package com.yargisoft.weatherapp.ui.fragments
+package com.yargisoft.weatherapp.view.fragments
 
 import android.Manifest
 import android.content.Context.INPUT_METHOD_SERVICE
@@ -18,9 +18,9 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import com.yargisoft.weatherapp.data.entity.ModelClass
+import com.yargisoft.weatherapp.model.entity.ModelClass
 import com.yargisoft.weatherapp.R
-import com.yargisoft.weatherapp.Utilities.ApiUtilities
+import com.yargisoft.weatherapp.retrofit.ApiUtilities
 import com.yargisoft.weatherapp.databinding.FragmentMainPageBinding
 import retrofit2.Call
 import retrofit2.Callback
@@ -51,7 +51,8 @@ class MainPageFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_main_page, container, false)
-       /* binding.rlMainLayout.visibility = View.GONE*/
+        binding.rlMainLayout.visibility = View.GONE
+        binding.pbLoading.visibility = View.VISIBLE
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireActivity())
         binding.etGetCityName.setOnEditorActionListener { v, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
@@ -277,26 +278,20 @@ class MainPageFragment : Fragment() {
 
     fun fetchCurrentLocationWeather(latitude: String, longitude: String){
 
-        ApiUtilities.getApiInterface()?.getCurrentWeahterData(
-            latitude, longitude,
-            MainPageFragment.API_KEY
-        )
-            ?.enqueue(object : Callback<ModelClass> {
+        ApiUtilities.getApiInterface()?.getCurrentWeahterData(latitude, longitude,MainPageFragment.API_KEY)?.enqueue(object : Callback<ModelClass> {
                 override fun onResponse(call: Call<ModelClass>, response: Response<ModelClass>) {
                     if (response.isSuccessful) {
                         setDataOnViews(response.body())
                        if (response.body() != null){
                            updateUI(response.body()!!.weather[0].id)
                        }
+                        binding.pbLoading.visibility = View.GONE
+                        binding.rlMainLayout.visibility = View.VISIBLE
                     }
                 }
-
                 override fun onFailure(call: Call<ModelClass>, t: Throwable) {
                 }
-
             })
-
-
     }
 
 
@@ -322,7 +317,11 @@ class MainPageFragment : Fragment() {
                 override fun onResponse(call: Call<ModelClass>, response: Response<ModelClass>) {
                     try {
                         setDataOnViews(response.body())
-                        updateUI(response.body()!!.weather[0].id)
+                        if (response.body() !=null){
+                            updateUI(response.body()!!.weather[0].id)
+                        }
+                        binding.pbLoading.visibility = View.GONE
+                        binding.rlMainLayout.visibility = View.VISIBLE
                     } catch (ex: java.lang.Exception) {
                         Toast.makeText(context, "Not a valid city", Toast.LENGTH_SHORT)
                             .show()
